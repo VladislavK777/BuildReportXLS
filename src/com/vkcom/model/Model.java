@@ -11,14 +11,21 @@ package com.vkcom.model;
 *
 */
 
+import java.io.IOException;
+import java.util.Map;
+
 public interface Model {
 
     // Метод загрузки файла из формы
-    public void loaderFile();
+    public void loaderFile(String path);
 
     // Метод парсинга файла Excel
-    public void parserXSLFile();
+    public Map<Object, Object> parserXSLFile();
 
     // Метод зааписи в файлы
-    public void writeToFileExcel();
+    public void writeToFileExcel() throws IOException;
+
+    // Экспорт в файлы
+    public void exportToFileExcel();
+
 }

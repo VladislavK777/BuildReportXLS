@@ -1,5 +1,9 @@
 package com.vkcom.application;
 
+import com.vkcom.model.ModelImpl;
+
+import java.io.IOException;
+
 /*
 *
 * @project BuildReportXLS
@@ -8,7 +12,8 @@ package com.vkcom.application;
 * @create 12.09.17
 *
 */public class Gotoapp {
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws IOException {
+        ModelImpl model = new ModelImpl();
+        model.writeToFileExcel();
     }
 }
