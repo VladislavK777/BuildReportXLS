@@ -17,7 +17,10 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -33,11 +36,10 @@ public class ModelImpl implements Model {
     private int tableSize;
 
     // Массив заголовков дя формирования выходного файла(fix)
-    private final String[] NAME_HEADERS = {"Номер вагона", "Собственник", "Клиент Текущее задание",
-            "Грузоотправитель наименование организации", "Грузополучатель наименование организации",
-            "Дата и время отправления", "Станция отправления", "Дорога отправления, наименование",
-            "Дорога назначения", "Станция назначения", "Накладная №", "Груж\\Порож", "Код груза ЕТСНГ",
-            "Груз", "Вес груза, тонны", "Расстояние всего (от станции отправления)", "Итого начислено без НДС"};
+    private final String[] NAME_HEADERS = {"Признак 4", "Номер вагона", "Грузоподъемность, тн", "Тип вагона", "Собственник", "Клиент Текущее задание",
+            "Грузоотправитель наименование организации", "Грузополучатель наименование организации", "Дата отправления", "Станция отправления",
+            "Дорога отправления, наименование", "Дорога назначения", "Станция назначения", "Накладная №", "Груж\\Порож", "Код груза ЕТСНГ", "Груз",
+            "Вес груза, тонны", "Расстояние всего (от станции отправления)", "Тариф ", "Итого начислено с НДС", "Итого начислено без НДС", "Признак 20"};
 
     // Тип вагона, для применения в фильтр
     private final String[] TYPE_WAGON = {"ГРУЖ", "ПОР"};
@@ -46,8 +48,8 @@ public class ModelImpl implements Model {
     private FileInputStream fileInputStream;
     private FileOutputStream fileOutputStream;
     private Sheet sheet;
+
     private Calendar calendar = new GregorianCalendar();
-    private SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
     private String dateYesterday = dateYesterday(calendar);
 
     // Успешная выгрузка
@@ -55,9 +57,9 @@ public class ModelImpl implements Model {
 
     // Получение вчерашней даты
     private String dateYesterday(Calendar calendar) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
         calendar.add(Calendar.DAY_OF_MONTH, -1);
-        String dateYesterday = format.format(calendar.getTime());
-        return dateYesterday;
+        return simpleDateFormat.format(calendar.getTime());
     }
 
     @Override
@@ -91,6 +93,7 @@ public class ModelImpl implements Model {
             map.put(i, tempList);
             i++;
         }
+        //System.out.println(map);
 
         // Применяем фильры
         Map<Object, Object> totalMap = new HashMap<>();
@@ -160,7 +163,7 @@ public class ModelImpl implements Model {
     public void writeToFileExcel() {
         for (int z = 0; z < TYPE_WAGON.length; z++) {
             HSSFWorkbook workBook = new HSSFWorkbook();
-            Sheet sheet = workBook.createSheet("sheet_" + TYPE_WAGON[z]);
+            Sheet sheet = workBook.createSheet(TYPE_WAGON[z]);
             Map<Object, Object> map = parserXSLFile(TYPE_WAGON[z]);
 
             int rownum = 0;
@@ -182,14 +185,18 @@ public class ModelImpl implements Model {
                         if (this.NAME_HEADERS[i].equals(String.valueOf(body.getKey()))) {
                             List<Object> temp = (List<Object>) body.getValue();
                             cell = row.createCell(i);
-                            cell.setCellValue(String.valueOf(temp.get(j)));
+                            if (this.NAME_HEADERS[i].equals("Дата отправления")) {
+                                cell.setCellValue(dateNormal(String.valueOf(temp.get(j))));
+                            } else {
+                                cell.setCellValue(String.valueOf(temp.get(j)));
+                            }
                         }
                     }
                 }
             }
 
-            //File file = new File("C:\\Users\\User93\\Desktop\\" + TYPE_WAGON[z] + ".xls");
-            File file = new File("C:\\Users\\Vladislav.Klochkov\\Desktop\\" + TYPE_WAGON[z] + ".xls");
+            File file = new File("C:\\Users\\User93\\Desktop\\" + TYPE_WAGON[z] + ".xls");
+            //File file = new File("C:\\Users\\Vladislav.Klochkov\\Desktop\\" + TYPE_WAGON[z] + ".xls");
             file.getParentFile().mkdirs();
 
 
@@ -204,6 +211,20 @@ public class ModelImpl implements Model {
                 isOk = false;
             }
         }
+    }
+
+    // Вспомогательный метод возврата даты в нормальный вид
+    private String dateNormal(String dateEng) {
+        Date date = null;
+        String dateNormal = null;
+        try {
+            date = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH).parse(dateEng);
+            dateNormal = new SimpleDateFormat("dd.MM.yyyy").format(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(dateNormal);
+        return dateNormal;
     }
 
     @Override
