@@ -37,7 +37,7 @@ public class Controller {
     }
 
     public void writeToExcel() {
-        model.setFile(this.file);
+        model.loaderFile(this.file);
         model.writeToFileExcel();
         if (model.isOk()) {
             view.labelOk.setText("Выгрузка завершена успешно.");
