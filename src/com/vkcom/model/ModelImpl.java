@@ -11,6 +11,7 @@ package com.vkcom.model;
 *
 */
 
+import com.vkcom.model.LocalClass.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -26,14 +27,18 @@ import java.util.*;
 
 public class ModelImpl {
 
+    private ClassFilter_120_122 classFilter_120_122 = new ClassFilter_120_122();
+    private ClassFilter_138 classFilter_138 = new ClassFilter_138();
+    private ClassFilter_150_161 classFilter_150_161 = new ClassFilter_150_161();
+
     // Путь к файлу Excel
     private File file;
 
     // Остнованя маппа с первоначальными данными
-    private Map<Integer, Object> map = new HashMap<>();
+    private static Map<Integer, Object> map = new HashMap<>();
 
     // Размер таблицы. Вспомогательная переменная
-    private int tableSize;
+    private List<Integer> tableSize = new ArrayList<>();
 
     // Массив заголовков дя формирования выходного файла(fix)
     private final String[] NAME_HEADERS = {"Станция текущей дислокации", "Признак 4", "Номер вагона", "Грузоподъемность, тн", "Тип вагона", "Собственник", "Клиент Текущее задание",
@@ -52,8 +57,6 @@ public class ModelImpl {
     private Calendar calendar = new GregorianCalendar();
     private String dateYesterday = dateYesterday(calendar);
 
-    private List<Map<Integer, Object>> listMaps = new ArrayList<>();
-
     // Успешная выгрузка
     private boolean isOk = false;
 
@@ -66,10 +69,10 @@ public class ModelImpl {
 
     public void loaderFile(File file) {
         setFile(file);
+        fillMap();
     }
 
-
-    public List<Map<Integer, Object>> parserXSLFile(String typeWagon) {
+    private void fillMap() {
         // Получаем файл формата xls
         try {
             fileInputStream = new FileInputStream(this.file);
@@ -94,62 +97,75 @@ public class ModelImpl {
             map.put(i, tempList);
             i++;
         }
+    }
 
+    public List<Map<Object, Object>> parserXSLFile(String typeWagon) {
+        List<Map<Object, Object>> listMaps = new ArrayList<>();
 
-        return totalMap;
+        listMaps.add(classFilter_120_122.applyFilters(map, typeWagon, dateYesterday));
+        tableSize.add(classFilter_120_122.getTableSize());
+        listMaps.add(classFilter_138.applyFilters(map, typeWagon, dateYesterday));
+        tableSize.add(classFilter_138.getTableSize());
+        listMaps.add(classFilter_150_161.applyFilters(map, typeWagon, dateYesterday));
+        tableSize.add(classFilter_150_161.getTableSize());
+
+        return listMaps;
     }
 
     public void writeToFileExcel() {
         for (int z = 0; z < TYPE_WAGON.length; z++) {
 
-            Map<Object, Object> map = parserXSLFile(TYPE_WAGON[z]);
+            List<Map<Object, Object>> map = parserXSLFile(TYPE_WAGON[z]);
 
-            HSSFWorkbook workBook = new HSSFWorkbook();
-            Sheet sheet = workBook.createSheet(TYPE_WAGON[z]);
+            for (int a = 0; a < map.size(); a++) {
+                HSSFWorkbook workBook = new HSSFWorkbook();
+                Sheet sheet = workBook.createSheet(TYPE_WAGON[z]);
 
-            int rownum = 0;
-            Cell cell;
-            Row row;
+                int rownum = 0;
+                Cell cell;
+                Row row;
 
-            row = sheet.createRow(rownum);
-
-            for (int i = 0; i < this.NAME_HEADERS.length; i++) {
-                cell = row.createCell(i, CellType.STRING);
-                cell.setCellValue(this.NAME_HEADERS[i]);
-            }
-
-            for (int j = 0; j < this.tableSize; j++) {
-                rownum++;
                 row = sheet.createRow(rownum);
+
                 for (int i = 0; i < this.NAME_HEADERS.length; i++) {
-                    for (Map.Entry<Object, Object> body : map.entrySet()) {
-                        if (this.NAME_HEADERS[i].equals(String.valueOf(body.getKey()))) {
-                            List<Object> temp = (List<Object>) body.getValue();
-                            cell = row.createCell(i);
-                            if (this.NAME_HEADERS[i].equals("Дата отправления")) {
-                                cell.setCellValue(dateNormal(String.valueOf(temp.get(j))));
-                            } else {
-                                cell.setCellValue(String.valueOf(temp.get(j)));
+                    cell = row.createCell(i, CellType.STRING);
+                    cell.setCellValue(this.NAME_HEADERS[i]);
+                }
+
+                for (int j = 0; j < this.tableSize.get(a); j++) {
+                    rownum++;
+                    row = sheet.createRow(rownum);
+                    for (int i = 0; i < this.NAME_HEADERS.length; i++) {
+                        for (Map.Entry<Object, Object> body : map.get(a).entrySet()) {
+                            if (this.NAME_HEADERS[i].equals(String.valueOf(body.getKey()))) {
+                                List<Object> temp = (List<Object>) body.getValue();
+                                cell = row.createCell(i);
+                                if (this.NAME_HEADERS[i].equals("Дата отправления")) {
+                                    cell.setCellValue(dateNormal(String.valueOf(temp.get(j))));
+                                } else {
+                                    cell.setCellValue(String.valueOf(temp.get(j)));
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            //File file = new File("C:\\Users\\User93\\Desktop\\" + TYPE_WAGON[z] + ".xls");
-            File file = new File("C:\\Users\\Vladislav.Klochkov\\Desktop\\" + TYPE_WAGON[z] + ".xls");
-            file.getParentFile().mkdirs();
+                //File file = new File("C:\\Users\\User93\\Desktop\\" + TYPE_WAGON[z] + ".xls");
+                //File file = new File("C:\\Users\\Vladislav.Klochkov\\Desktop\\" + TYPE_WAGON[z] + a + ".xls");
+                //File file = new File("/Users/vladislavklockov/Desktop/" + TYPE_WAGON[z] + a + ".xls");
+                file.getParentFile().mkdirs();
 
 
-            try {
-                fileOutputStream = new FileOutputStream(file);
-                workBook.write(fileOutputStream);
-                fileOutputStream.flush();
-                fileOutputStream.close();
-                isOk = true;
-            } catch (IOException e) {
-                System.out.println("Ошибка записи в файлы!");
-                isOk = false;
+                try {
+                    fileOutputStream = new FileOutputStream(file);
+                    workBook.write(fileOutputStream);
+                    fileOutputStream.flush();
+                    fileOutputStream.close();
+                    isOk = true;
+                } catch (IOException e) {
+                    System.out.println("Ошибка записи в файлы!");
+                    isOk = false;
+                }
             }
         }
     }

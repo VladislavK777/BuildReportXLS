@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ClassFilter_120_122 {
+    private int tableSize;
 
     // метод применения фильров
     private Map<Integer, Object> filters(Map<Integer, Object> map, String typeWagon, String dateYesterday) {
@@ -57,12 +58,13 @@ public class ClassFilter_120_122 {
     }
 
     // Применяем фильры
-    public Map<Object, Object> applyFilters(Map<Integer, Object> map, String typeWagon) {
+    public Map<Object, Object> applyFilters(Map<Integer, Object> map, String typeWagon, String dateYesterday) {
+        System.out.println(map);
         List<Object> header = (List<Object>) map.get(0);
         Map<Object, Object> totalMap = new HashMap<>();
         for (int j = 0; j < header.size(); j++) {
             List<Object> tempBody = new ArrayList<>();
-            for (Map.Entry<Integer, Object> body : filters(typeWagon, this.dateYesterday).entrySet()) {
+            for (Map.Entry<Integer, Object> body : filters(map, typeWagon, dateYesterday).entrySet()) {
                 List<Object> temp = (List<Object>) body.getValue();
                 tempBody.add(temp.get(j));
             }
@@ -71,4 +73,9 @@ public class ClassFilter_120_122 {
         }
         return totalMap;
     }
+
+    public int getTableSize() {
+        return tableSize;
+    }
+
 }

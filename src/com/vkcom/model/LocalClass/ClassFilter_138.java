@@ -1,13 +1,15 @@
 package com.vkcom.model.LocalClass;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ClassFilter_138 {
+    private int tableSize;
 
     // метод применения фильров
-    private Map<Integer, Object> applyFilters(Map<Integer, Object> map, String typeWagon, String dateYesterday) {
+    private Map<Integer, Object> filters(Map<Integer, Object> map, String typeWagon, String dateYesterday) {
         Map<Integer, Object> tempMap = new HashMap<>();
         int f = 0;
         for (Map.Entry<Integer, Object> m : map.entrySet()) {
@@ -51,6 +53,26 @@ public class ClassFilter_138 {
             }
         }
         return tempMap;
+    }
+
+    // Применяем фильры
+    public Map<Object, Object> applyFilters(Map<Integer, Object> map, String typeWagon, String dateYesterday) {
+        List<Object> header = (List<Object>) map.get(0);
+        Map<Object, Object> totalMap = new HashMap<>();
+        for (int j = 0; j < header.size(); j++) {
+            List<Object> tempBody = new ArrayList<>();
+            for (Map.Entry<Integer, Object> body : filters(map, typeWagon, dateYesterday).entrySet()) {
+                List<Object> temp = (List<Object>) body.getValue();
+                tempBody.add(temp.get(j));
+            }
+            this.tableSize = tempBody.size();
+            totalMap.put(header.get(j), tempBody);
+        }
+        return totalMap;
+    }
+
+    public int getTableSize() {
+        return tableSize;
     }
 
 }
