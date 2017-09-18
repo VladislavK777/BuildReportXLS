@@ -64,8 +64,8 @@ public class ModelImpl {
 
     // Получение вчерашней даты
     private String dateYesterday(Calendar calendar) {
-        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         //System.out.println(simpleDateFormat.format(calendar.getTime()));
         return simpleDateFormat.format(calendar.getTime());
