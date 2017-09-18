@@ -46,7 +46,7 @@ public class ModelImpl {
     private final String[] NAME_HEADERS = {"Станция текущей дислокации", "Признак 4", "Номер вагона", "Грузоподъемность, тн", "Тип вагона", "Собственник", "Клиент Текущее задание",
             "Грузоотправитель наименование организации", "Грузополучатель наименование организации", "Дата отправления", "Станция отправления",
             "Дорога отправления, наименование", "Дорога назначения", "Станция назначения", "Накладная №", "Груж\\Порож", "Код груза ЕТСНГ", "Груз",
-            "Вес груза, тонны", "Расстояние всего (от станции отправления)", "Тариф ", "Итого начислено с НДС", "Итого начислено без НДС", "Признак 20"};
+            "Вес груза, тонны", "Расстояние всего (от станции отправления)", "Тариф ", "Итого начислено с НДС", "Итого начислено без НДС"};
 
     // Тип вагона, для применения в фильтр
     private final String[] TYPE_WAGON = {"ГРУЖ", "ПОР"};
@@ -64,9 +64,10 @@ public class ModelImpl {
 
     // Получение вчерашней даты
     private String dateYesterday(Calendar calendar) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
-        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
         calendar.add(Calendar.DAY_OF_MONTH, -1);
+        //System.out.println(simpleDateFormat.format(calendar.getTime()));
         return simpleDateFormat.format(calendar.getTime());
     }
 
@@ -100,7 +101,7 @@ public class ModelImpl {
             map.put(i, tempList);
             i++;
         }
-
+        System.out.println(map.get(100));
     }
 
     public List<Map<Object, Object>> parserXSLFile(String typeWagon) {
@@ -164,8 +165,8 @@ public class ModelImpl {
 
                 tableSizeNum++;
 
-                //File file = new File("C:\\Users\\User93\\Desktop\\" + TYPE_WAGON[z] + nameKR[a] + ".xls");
-                File file = new File("C:\\Users\\Vladislav.Klochkov\\Desktop\\" + TYPE_WAGON[z] + nameKR[a] + ".xls");
+                File file = new File("C:\\Users\\User93\\Desktop\\" + TYPE_WAGON[z] + nameKR[a] + ".xls");
+                //File file = new File("C:\\Users\\Vladislav.Klochkov\\Desktop\\" + TYPE_WAGON[z] + nameKR[a] + ".xls");
                 //File file = new File("/Users/vladislavklockov/Desktop/" + TYPE_WAGON[z] + nameKR[a] + ".xls");
                 file.getParentFile().mkdirs();
 
@@ -188,7 +189,8 @@ public class ModelImpl {
         Date date = null;
         String dateNormal = null;
         try {
-            date = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH).parse(dateEng);
+            //date = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH).parse(dateEng);
+            date = new SimpleDateFormat("dd-MMM-yyyy").parse(dateEng);
             dateNormal = new SimpleDateFormat("dd.MM.yyyy").format(date);
         } catch (Exception e) {
             e.printStackTrace();
