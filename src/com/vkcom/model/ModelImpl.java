@@ -65,6 +65,7 @@ public class ModelImpl {
     // Получение вчерашней даты
     private String dateYesterday(Calendar calendar) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         return simpleDateFormat.format(calendar.getTime());
     }
@@ -150,6 +151,7 @@ public class ModelImpl {
                             if (this.NAME_HEADERS[i].equals(String.valueOf(body.getKey()))) {
                                 List<Object> temp = (List<Object>) body.getValue();
                                 cell = row.createCell(i);
+                                //cell.setCellValue(String.valueOf(temp.get(j)));
                                 if (this.NAME_HEADERS[i].equals("Дата отправления")) {
                                     cell.setCellValue(dateNormal(String.valueOf(temp.get(j))));
                                 } else {
