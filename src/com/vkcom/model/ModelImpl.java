@@ -2,7 +2,7 @@ package com.vkcom.model;
 
 /*
 *
-* Имплементер Модели
+* Модель
 *
 * @project BuildReportXLS
 * @author vladislavklockov
