@@ -30,6 +30,8 @@ public class ModelImpl {
     private ClassFilter_120_122 classFilter_120_122 = new ClassFilter_120_122();
     private ClassFilter_138 classFilter_138 = new ClassFilter_138();
     private ClassFilter_150_161 classFilter_150_161 = new ClassFilter_150_161();
+    private ClassFilterPvGruz classFilterPvGruz = new ClassFilterPvGruz();
+    private ClassFilterPvKrGruz classFilterPvKrGruz = new ClassFilterPvKrGruz();
 
     // Путь к файлу Excel
     private File file;
@@ -97,6 +99,7 @@ public class ModelImpl {
             map.put(i, tempList);
             i++;
         }
+
     }
 
     public List<Map<Object, Object>> parserXSLFile(String typeWagon) {
@@ -108,11 +111,18 @@ public class ModelImpl {
         tableSize.add(classFilter_138.getTableSize());
         listMaps.add(classFilter_150_161.applyFilters(map, typeWagon, dateYesterday));
         tableSize.add(classFilter_150_161.getTableSize());
+        listMaps.add(classFilterPvGruz.applyFilters(map, typeWagon, dateYesterday));
+        tableSize.add(classFilterPvGruz.getTableSize());
+        listMaps.add(classFilterPvKrGruz.applyFilters(map, typeWagon, dateYesterday));
+        tableSize.add(classFilterPvKrGruz.getTableSize());
 
         return listMaps;
     }
 
     public void writeToFileExcel() {
+        int tableSizeNum = 0;
+        String[] nameKR = {"_120_122", "_138", "_150_161", "_ПВ", "_ПВ+КР"};
+
         for (int z = 0; z < TYPE_WAGON.length; z++) {
 
             List<Map<Object, Object>> map = parserXSLFile(TYPE_WAGON[z]);
@@ -132,7 +142,7 @@ public class ModelImpl {
                     cell.setCellValue(this.NAME_HEADERS[i]);
                 }
 
-                for (int j = 0; j < this.tableSize.get(a); j++) {
+                for (int j = 0; j < this.tableSize.get(tableSizeNum); j++) {
                     rownum++;
                     row = sheet.createRow(rownum);
                     for (int i = 0; i < this.NAME_HEADERS.length; i++) {
@@ -150,11 +160,12 @@ public class ModelImpl {
                     }
                 }
 
-                //File file = new File("C:\\Users\\User93\\Desktop\\" + TYPE_WAGON[z] + ".xls");
-                //File file = new File("C:\\Users\\Vladislav.Klochkov\\Desktop\\" + TYPE_WAGON[z] + a + ".xls");
+                tableSizeNum++;
+
+                File file = new File("C:\\Users\\User93\\Desktop\\" + TYPE_WAGON[z] + ".xls");
+                //File file = new File("C:\\Users\\Vladislav.Klochkov\\Desktop\\" + TYPE_WAGON[z] + nameKR[a] + ".xls");
                 //File file = new File("/Users/vladislavklockov/Desktop/" + TYPE_WAGON[z] + a + ".xls");
                 file.getParentFile().mkdirs();
-
 
                 try {
                     fileOutputStream = new FileOutputStream(file);

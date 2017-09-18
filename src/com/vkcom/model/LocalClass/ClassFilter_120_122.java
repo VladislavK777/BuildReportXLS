@@ -5,6 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+*
+* Вспомогательный класс для фильтра 120_122
+*
+* @project BuildReportXLS
+* @author vladislavklockov
+* @version 1.0
+* @create 18.09.17
+*
+*/
+
+
 public class ClassFilter_120_122 {
     private int tableSize;
 
@@ -14,40 +26,29 @@ public class ClassFilter_120_122 {
         int f = 0;
         for (Map.Entry<Integer, Object> m : map.entrySet()) {
             List<Object> l = (List<Object>) m.getValue();
-            for (int j = 0; j < l.size(); j++) {
-                if (String.valueOf(l.get(j)).equals("КР")) {
-                    List<Object> l1 = (List<Object>) m.getValue();
-                    for (int k = 0; k < l1.size(); k++) {
-                        if (String.valueOf(l1.get(k)).equals("120.0") ||
-                                String.valueOf(l1.get(k)).equals("121.0") ||
-                                String.valueOf(l1.get(k)).equals("122.0")) {
-                            List<Object> l2 = (List<Object>) m.getValue();
-                            for (int w = 0; w < l2.size(); w++) {
-                                if (String.valueOf(l2.get(w)).equals(typeWagon)) {
-                                    List<Object> l3 = (List<Object>) m.getValue();
-                                    for (int z = 0; z < l3.size(); z++) {
-                                        if (String.valueOf(l3.get(z)).contains(dateYesterday)) {
-                                            List<Object> l4 = (List<Object>) m.getValue();
-                                            for (int q = 0; q < l4.size(); q++) {
-                                                if (String.valueOf(l4.get(q)).equals("Альфа Транс Логистик, ООО") ||
-                                                        String.valueOf(l4.get(q)).equals("А-Система Транс ООО") ||
-                                                        String.valueOf(l4.get(q)).equals("ВАГОНЫ НА СЛЕЖЕНИИ ДЛЯ ИНФОРМАЦИИ") ||
-                                                        String.valueOf(l4.get(q)).equals("ВЕСТКОМТРАНС ООО") ||
-                                                        String.valueOf(l4.get(q)).equals("Дженерал Лизинг") ||
-                                                        String.valueOf(l4.get(q)).equals("ИнтерТрансКарго ООО ") ||
-                                                        String.valueOf(l4.get(q)).equals("РЕАЛГРУПП") ||
-                                                        String.valueOf(l4.get(q)).equals("РТХ-Логистик") ||
-                                                        String.valueOf(l4.get(q)).equals("ТД АМК ООО") ||
-                                                        String.valueOf(l4.get(q)).equals("ФИРМА ТРАНСГАРАНТ ООО") ||
-                                                        String.valueOf(l4.get(q)).equals("УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ")) {
-                                                    tempMap.put(f, m.getValue());
-                                                    f++;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+            if (String.valueOf(l.get(6)).equals("КР")) {
+                List<Object> l1 = (List<Object>) m.getValue();
+                if (String.valueOf(l1.get(3)).equals("120.0") ||
+                        String.valueOf(l1.get(3)).equals("121.0") ||
+                        String.valueOf(l1.get(3)).equals("122.0")) {
+                    List<Object> l2 = (List<Object>) m.getValue();
+                    if (String.valueOf(l2.get(17)).equals(typeWagon)) {
+                        List<Object> l3 = (List<Object>) m.getValue();
+                        if (String.valueOf(l3.get(11)).contains(dateYesterday)) {
+                            List<Object> l4 = (List<Object>) m.getValue();
+                            if (String.valueOf(l4.get(7)).equals("Альфа Транс Логистик, ООО") ||
+                                    String.valueOf(l4.get(7)).equals("А-Система Транс ООО") ||
+                                    String.valueOf(l4.get(7)).equals("ВАГОНЫ НА СЛЕЖЕНИИ ДЛЯ ИНФОРМАЦИИ") ||
+                                    String.valueOf(l4.get(7)).equals("ВЕСТКОМТРАНС ООО") ||
+                                    String.valueOf(l4.get(7)).equals("Дженерал Лизинг") ||
+                                    String.valueOf(l4.get(7)).equals("ИнтерТрансКарго ООО ") ||
+                                    String.valueOf(l4.get(7)).equals("РЕАЛГРУПП") ||
+                                    String.valueOf(l4.get(7)).equals("РТХ-Логистик") ||
+                                    String.valueOf(l4.get(7)).equals("ТД АМК ООО") ||
+                                    String.valueOf(l4.get(7)).equals("ФИРМА ТРАНСГАРАНТ ООО") ||
+                                    String.valueOf(l4.get(7)).equals("УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ")) {
+                                tempMap.put(f, m.getValue());
+                                f++;
                             }
                         }
                     }
@@ -59,7 +60,6 @@ public class ClassFilter_120_122 {
 
     // Применяем фильры
     public Map<Object, Object> applyFilters(Map<Integer, Object> map, String typeWagon, String dateYesterday) {
-        System.out.println(map);
         List<Object> header = (List<Object>) map.get(0);
         Map<Object, Object> totalMap = new HashMap<>();
         for (int j = 0; j < header.size(); j++) {
