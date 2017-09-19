@@ -46,7 +46,8 @@ public class ClassFilter_120_122 {
                                     String.valueOf(l4.get(7)).equals("РТХ-Логистик") ||
                                     String.valueOf(l4.get(7)).equals("ТД АМК ООО") ||
                                     String.valueOf(l4.get(7)).equals("ФИРМА ТРАНСГАРАНТ ООО") ||
-                                    String.valueOf(l4.get(7)).equals("УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ")) {
+                                    String.valueOf(l4.get(7)).equals("УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ") ||
+                                    String.valueOf(l4.get(7)).equals("УГП ООО")) {
                                 tempMap.put(f, m.getValue());
                                 f++;
                             }
